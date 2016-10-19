@@ -37,6 +37,11 @@ public class Election {
 		private boolean isAdult() {
 			return (age >= VOTING_AGE);
 		}
+		
+		@SuppressWarnings("unused")
+		void display() {
+			System.out.printf("Name: %s\nAge: %d\n", name, age);
+		}
 	}
 	
 	private static class Voter extends Person {
@@ -54,12 +59,18 @@ public class Election {
 		private void voteFor(Candidate c) {
 			Results.addVote(c);
 		}
+		
+		@Override
+		void display() {
+			System.out.printf("Name: %s\nParty: %s\nAge: %d\n", name, party.name, age);
+		}
 	}
 	
 	private static class Candidate extends Voter {
 		
-		Candidate(Voter v) {
+		Candidate(Voter v, Party p) {
 			super(v);
+			this.party = p;
 		}
 	}
 	
@@ -78,7 +89,7 @@ public class Election {
 		}
 		
 		private void chooseCandidate(Voter v) {
-			Candidate c = new Candidate(v);
+			Candidate c = new Candidate(v, this);
 			candidate = c;
 			Results.addCandidate(c);
 		}
@@ -86,10 +97,21 @@ public class Election {
 		private int getMemberNumber() {
 			return members.size();
 		}
+		
+		private void display() {
+			System.out.printf("%s\nMembers: %03d     Candidate: ", name, members.size());
+			if (candidate != null) 
+				System.out.printf("%s\n", candidate.name);
+			else {
+				System.out.printf("None chosen.\n");
+			}
+		}
 	}
 	
 	private static class Results {
-		static Map<Candidate, Integer> candidates = new HashMap<Candidate, Integer>();
+		private static Map<Candidate, Integer> candidates = new HashMap<Candidate, Integer>();
+		private static List<Candidate> podium = new ArrayList<Candidate>();
+		private static List<Integer> scores = new ArrayList<Integer>(); 
 		
 		private static void addCandidate(Candidate c) {
 			candidates.put(c, 0);
@@ -109,6 +131,50 @@ public class Election {
 		
 		private static int getCandidateNumber() {
 			return candidates.size();
+		}
+		
+		private static Candidate getWinner() {
+			if (podium.size() != 0)
+				return podium.get(0);
+			else {
+				System.err.println("Votes have not been counted yet");
+				return null;
+			}
+		}
+		
+		private static void countVotes() {
+			for (Map.Entry<Candidate, Integer> entry : candidates.entrySet()) {
+				if (podium.size() == 0) {
+					podium.add(entry.getKey());
+					scores.add(entry.getValue());
+				}
+				else {
+					int votes = entry.getValue();
+					for (int i = 0; i < podium.size(); i++) {
+						if (votes > scores.get(i)) {
+							podium.add(i, entry.getKey());
+							scores.add(i, votes);
+							break;
+						} 
+						else if (i == podium.size() - 1) {
+							podium.add(entry.getKey());
+							scores.add(votes);
+							break;
+						}
+					}		
+				}
+			}
+		}
+		
+		private static void display() {
+			Candidate winner = getWinner();
+			System.out.println("Winner:");
+			winner.display();
+			System.out.println("Votes:");
+			for (int i = 0; i < podium.size(); i++) {
+				Candidate candidate = podium.get(i);
+				System.out.printf("%-10s %-7s %5d\n", candidate.name, candidate.party.name, scores.get(i));
+			}
 		}
 	}
 	
@@ -145,7 +211,7 @@ public class Election {
 		}
 		
 		private void display() {
-			System.out.printf("%s/nPopulation: %d | Adults: %d/n", name, people.size(), adults);
+			System.out.printf("%s\nPopulation: %d     Adults: %d\n", name, people.size(), adults);
 			System.out.println("Sections:");
 			displaySections();
 		}
@@ -204,18 +270,22 @@ public class Election {
 	public static void main(String[] args) {
 		initCities();
 		initParties();
-		for (City city : cities) {
-			city.organizeIntoSections();
-			city.display();
-		}
+		initSections();
+		displayCities();
 		randomlyJoinParties();
-		//displayParties();
 		randomlyElectPartyCandidates();
+		displayParties();
+		displayCandidates();
 		runElection();
 		displayResults();
 	}
 	
 	private static void runElection() {
+		voting();
+		Results.countVotes();
+	}
+	
+	private static void voting() {
 		for (City city : cities) {
 			for (Section section : city.sections) {
 				for (Voter voter : section.registeredVoters) {
@@ -235,7 +305,32 @@ public class Election {
 	}
 	
 	private static void displayResults() {
-		System.out.println(Results.candidates);
+		System.out.println("====================   Results  ====================");
+		Results.display();
+	}
+	
+	private static void displayCities() {
+		System.out.println("====================   Cities   ====================");
+		for (City city : cities) {
+			city.display();
+			System.out.println("----------------------------------------------------");
+		}
+	}
+	
+	private static void displayParties() {
+		System.out.println("====================   Parties  ====================");
+		for (Party party : parties) {
+			party.display();
+			System.out.println("----------------------------------------------------");
+		}
+	}
+	
+	private static void displayCandidates() {
+		System.out.println("====================   Candidates  =================");
+		for (Candidate candidate : Results.getCandidates()) {
+			candidate.display();
+			System.out.println("----------------------------------------------------");
+		}
 	}
 	
 	private static void initCities() {
@@ -278,6 +373,12 @@ public class Election {
 		
 		for (int i = 0; i < totalPopulation / 500; i++) {
 			parties.add(initParty());
+		}
+	}
+	
+	private static void initSections() {
+		for (City city : cities) {
+			city.organizeIntoSections();
 		}
 	}
 	
