@@ -20,7 +20,9 @@ public class Election {
 	private static List<City> cities = new ArrayList<City>();
 	private static List<Party> parties = new ArrayList<Party>(); 
 	private static final int VOTING_AGE = 18;
+	private static final int PARTY_RATIO = 500000;
 	private static final Random RANDOM = new Random();
+	private static final char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
 	private static class Person {
 		
@@ -40,7 +42,7 @@ public class Election {
 		
 		@SuppressWarnings("unused")
 		void display() {
-			System.out.printf("Name: %s\nAge: %d\n", name, age);
+			System.out.printf("Name: %24s\nAge: %3d\n", name, age);
 		}
 	}
 	
@@ -62,7 +64,7 @@ public class Election {
 		
 		@Override
 		void display() {
-			System.out.printf("Name: %s\nParty: %s\nAge: %d\n", name, party.name, age);
+			System.out.printf("Name: %28s\nParty: %27s\nAge: %29d\n", name, party.name, age);
 		}
 	}
 	
@@ -99,9 +101,9 @@ public class Election {
 		}
 		
 		private void display() {
-			System.out.printf("%s\nMembers: %03d     Candidate: ", name, members.size());
+			System.out.printf("%s\nMembers: %06d     Candidate: ", name, members.size());
 			if (candidate != null) 
-				System.out.printf("%s\n", candidate.name);
+				System.out.printf("%23s\n", candidate.name);
 			else {
 				System.out.printf("None chosen.\n");
 			}
@@ -170,10 +172,11 @@ public class Election {
 			Candidate winner = getWinner();
 			System.out.println("Winner:");
 			winner.display();
+			System.out.println();
 			System.out.println("Votes:");
 			for (int i = 0; i < podium.size(); i++) {
 				Candidate candidate = podium.get(i);
-				System.out.printf("%-10s %-7s %5d\n", candidate.name, candidate.party.name, scores.get(i));
+				System.out.printf("%-24s %-7s %5d\n", candidate.name, candidate.party.name, scores.get(i));
 			}
 		}
 	}
@@ -219,12 +222,12 @@ public class Election {
 		private void displaySections() {
 			int rowCount = 0;
 			for (int i = 0; i < sections.size(); i++) {
-				if (++rowCount > 10) {
+				Section s = sections.get(i);
+				System.out.printf("Section %02d %03d   ", s.number, s.votersNumber());
+				if (++rowCount > 2) {
 					rowCount = 0;
 					System.out.println();
 				}
-				Section s = sections.get(i);
-				System.out.printf("Section %02d %03d     ", s.number, s.votersNumber());
 			}	
 			System.out.println();
 		}
@@ -237,7 +240,7 @@ public class Election {
 	private static class Section {
 		
 		private int number;
-		private static final int sectionSize = 150;
+		private static final int SECTION_SIZE = 50000;
 		
 		private List<Voter> registeredVoters = new ArrayList<Voter>();
 		
@@ -256,7 +259,7 @@ public class Election {
 		}
 		
 		private boolean isFull() {
-			return (registeredVoters.size() >= sectionSize);
+			return (registeredVoters.size() >= SECTION_SIZE);
 		}
 		
 		private boolean isEmpty() {
@@ -305,53 +308,53 @@ public class Election {
 	}
 	
 	private static void displayResults() {
-		System.out.println("====================   Results  ====================");
+		System.out.println("====================   Results  ======================");
 		Results.display();
 	}
 	
 	private static void displayCities() {
-		System.out.println("====================   Cities   ====================");
+		System.out.println("====================   Cities   ======================");
 		for (City city : cities) {
 			city.display();
-			System.out.println("----------------------------------------------------");
+			System.out.println("------------------------------------------------------");
 		}
 	}
 	
 	private static void displayParties() {
-		System.out.println("====================   Parties  ====================");
+		System.out.println("====================   Parties  ======================");
 		for (Party party : parties) {
 			party.display();
-			System.out.println("----------------------------------------------------");
+			System.out.println("------------------------------------------------------");
 		}
 	}
 	
 	private static void displayCandidates() {
-		System.out.println("====================   Candidates  =================");
+		System.out.println("====================   Candidates  ===================");
 		for (Candidate candidate : Results.getCandidates()) {
 			candidate.display();
-			System.out.println("----------------------------------------------------");
+			System.out.println("------------------------------------------------------");
 		}
 	}
 	
 	private static void initCities() {
 		City city = new City("Bucharest");
-		initPopulation(city, 1883);
+		initPopulation(city, 1883000);
 		cities.add(city);
 		
 		city = new City("Cluj-Napoca");
-		initPopulation(city, 324);
+		initPopulation(city, 324000);
 		cities.add(city);
 		
 		city = new City("Timisoara");
-		initPopulation(city, 319);
+		initPopulation(city, 319000);
 		cities.add(city);
 		
 		city = new City("Iasi");
-		initPopulation(city, 290);
+		initPopulation(city, 290000);
 		cities.add(city);
 		
 		city = new City("Constanta");
-		initPopulation(city, 283);
+		initPopulation(city, 283000);
 		cities.add(city);
 	}
 	
@@ -371,7 +374,7 @@ public class Election {
 			totalPopulation += city.getPopulation();
 		}
 		
-		for (int i = 0; i < totalPopulation / 500; i++) {
+		for (int i = 0; i < totalPopulation / PARTY_RATIO; i++) {
 			parties.add(initParty());
 		}
 	}
@@ -383,7 +386,7 @@ public class Election {
 	}
 	
 	private static Party initParty() {
-		return new Party("Party" + RANDOM.nextInt(25));
+		return new Party(randomWord(3).toUpperCase());
 	}
 	
 	private static Person initPerson() {
@@ -421,7 +424,7 @@ public class Election {
 	}
 	
 	private static String randomName() {
-		return "Person" + randomInt(1000);
+		return randomUppercaseWord(randomInt(5) + 3) + " " + randomUppercaseWord(randomInt(10) + 3);
 	}
 	
 	private static int randomInt(int n) {
@@ -430,5 +433,18 @@ public class Election {
 	
 	private static String randomCNP() {
 		return UUID.randomUUID().toString().replace("-", "").substring(0, 13);
+	}
+	
+	private static String randomWord(int n) {
+		String word = "";
+		for (int i = 0; i < n; i++) {
+			word += ALPHABET[randomInt(ALPHABET.length)];
+		}
+		return word;
+	}
+	
+	private static String randomUppercaseWord(int n) {
+		String word = randomWord(n);
+		return word.substring(0, 1).toUpperCase() + word.substring(1);
 	}
 }
