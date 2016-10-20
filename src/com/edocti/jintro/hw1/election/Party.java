@@ -12,6 +12,7 @@ public class Party {
 	
 	public String name;
 	public Candidate candidate;
+	
 	private List<Voter> members = new ArrayList<Voter>();
 	
 	Party(String n) {

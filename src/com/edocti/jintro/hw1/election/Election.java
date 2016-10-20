@@ -124,13 +124,6 @@ public class Election {
 			}
 		}
 	}
-	
-	/**
-	 * @return the voting age.
-	 */
-	public static int getVotingAge() {
-		return VOTING_AGE;
-	}
 
 	/**
 	 * @param args
@@ -295,5 +288,12 @@ public class Election {
 	private static String randomUppercaseWord(int n) {
 		String word = randomWord(n);
 		return word.substring(0, 1).toUpperCase() + word.substring(1);
+	}
+	
+	/**
+	 * @return the voting age.
+	 */
+	public static int getVotingAge() {
+		return VOTING_AGE;
 	}
 }

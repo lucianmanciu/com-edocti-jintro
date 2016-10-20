@@ -5,6 +5,7 @@ package com.edocti.jintro.hw1.election;
  * @author manciul
  */
 public class Voter extends Person {
+	
 	protected Party party;
 	
 	Voter(Person p) {

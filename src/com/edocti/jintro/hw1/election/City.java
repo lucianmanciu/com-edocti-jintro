@@ -10,6 +10,7 @@ import java.util.List;
 public class City {
 	
 	public String name;
+	
 	private int adults;
 	private Section latestSection;
 	private List<Person> people = new ArrayList<Person>();
@@ -18,6 +19,14 @@ public class City {
 	City(String n) {
 		this.name = n;
 		this.adults = 0;
+	}
+	
+	public void newInhabitant(Person person) {
+		people.add(person);
+	}
+	
+	private Section openNewSection() {
+		return new Section(sections.size() + 1);
 	}
 	
 	public void organizeIntoSections() {
@@ -36,15 +45,7 @@ public class City {
 		if (!latestSection.isEmpty()) 
 			sections.add(latestSection);
 	}
-	
-	public void newInhabitant(Person person) {
-		people.add(person);
-	}
-	
-	private Section openNewSection() {
-		return new Section(sections.size() + 1);
-	}
-	
+
 	public void display() {
 		System.out.printf("%s\nPopulation: %d     Adults: %d\n", name, people.size(), adults);
 		System.out.println("Sections:");
@@ -68,6 +69,14 @@ public class City {
 		return people.size();
 	}
 	
+	private void countAdults() {
+		adults = 0;
+		people.forEach((person) -> {
+			if (person.isAdult())
+				adults++;
+		});
+	}
+	
 	public int getAdultsNumber() {
 		if (adults == 0)
 			countAdults();
@@ -76,13 +85,5 @@ public class City {
 	
 	public List<Section> getSections() {
 		return sections;
-	}
-	
-	private void countAdults() {
-		adults = 0;
-		people.forEach((person) -> {
-			if (person.isAdult())
-				adults++;
-		});
 	}
 }
