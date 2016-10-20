@@ -78,8 +78,8 @@ public class IntegerOperations {
 	/**
 	 * Read operation to be performed on operands 1 and 2 from <code>input</code> <code>string</code>
 	 * @param input
-	 * @return @link Operation enum value matching <code>input</code>
-	 * @throws IllegalArgumentException if <code>input</code> is empty or there is no matching @link Operation implemented
+	 * @return {@link Operation} <code>enum</code> value matching <code>input</code>
+	 * @throws IllegalArgumentException if <code>input</code> is empty or there is no matching {@link Operation} implemented
 	 */
 	private static Operation readOperation(String input) {
 		if (isStringEmpty(input)) {

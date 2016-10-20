@@ -9,13 +9,8 @@ import java.util.Random;
  */
 public class StateMachine {
 	
-	private CustomerSatisfaction satisfaction;
 	private static final Random RANDOM = new Random();
 	private static final int EVENT_SIZE = ProjectEvent.values().length;
-	
-	public StateMachine() {
-		satisfaction = CustomerSatisfaction.UNPLEASED;
-	}
 	
 	enum CustomerSatisfaction {
 		PLEASED, SATISFIED, UNPLEASED, FURIOUS;
@@ -66,8 +61,8 @@ public class StateMachine {
 		
 		/**
 		 * Search the next state in the transition table
-		 * @param current current @link CustomerSatisfaction
-		 * @param event event from @link ProjectEvent which has occurred
+		 * @param current current {@link CustomerSatisfaction}
+		 * @param event event from {@link ProjectEvent} which has occurred
 		 * @return <code>CustomerSatisfaction</code> that has been transitioned to
 		 */
 		public static CustomerSatisfaction next(CustomerSatisfaction current, ProjectEvent event) {
@@ -84,28 +79,28 @@ public class StateMachine {
 	 */
 	public static void main(String[] args) {
 		
-		StateMachine machine = new StateMachine();
-		machine.satisfaction.status();
+		CustomerSatisfaction customer = CustomerSatisfaction.UNPLEASED;
+		customer.status();
 		int n = getInput();	
 		while (n-- > 0) {
-			triggerEvent(machine);
-			machine.satisfaction.status();
+			triggerEvent(customer);
+			customer.status();
 		}
 		System.out.println("Finished");
 	}
 
 	/**
-	 * Trigger an event at random on the given @link StateMachine
-	 * @param machine
+	 * Trigger an event at random on the given customer satisfaction.
+	 * @param current {@link CustomerSatisfaction}
 	 */
-	private static void triggerEvent(StateMachine machine) {
+	private static void triggerEvent(CustomerSatisfaction customer) {
 		ProjectEvent event = randomEvent();
 		event.status();
-		machine.satisfaction = ProjectTransitions.next(machine.satisfaction, event);
+		customer = ProjectTransitions.next(customer, event);
 	}
 	
 	/**
-	 * Pick a random event from @link ProjectEvent
+	 * Pick a random event from {@link ProjectEvent}
 	 * @return random <code>ProjectEvent</code>
 	 */
 	private static ProjectEvent randomEvent() {

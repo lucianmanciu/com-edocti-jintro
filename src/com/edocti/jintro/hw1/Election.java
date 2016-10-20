@@ -24,6 +24,10 @@ public class Election {
 	private static final Random RANDOM = new Random();
 	private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 			
+	/**
+	 * Represents one person and their info.
+	 * @author manciul
+	 */
 	private static class Person {
 		
 		protected String name;
@@ -36,16 +40,27 @@ public class Election {
 			this.age = a;
 		}
 		
+		/**
+		 * Check if a person is an adult (over the voting age).
+		 * @return <code>true</code> if the person's age is over {@link VOTING_AGE} and <code>false</code> otherwise.
+		 */
 		private boolean isAdult() {
 			return (age >= VOTING_AGE);
 		}
 		
+		/**
+		 * Display person info to standard output.
+		 */
 		@SuppressWarnings("unused")
 		void display() {
 			System.out.printf("Name: %24s\nAge: %3d\n", name, age);
 		}
 	}
 	
+	/**
+	 * Represents a voter and their info, can join and belong to a party, and vote in elections.
+	 * @author manciul
+	 */
 	private static class Voter extends Person {
 		protected Party party;
 		
@@ -53,21 +68,36 @@ public class Election {
 			super(p.name, p.CNP, p.age);
 		}
 		
+		/**
+		 * Join a given party.
+		 * @param p {@link Party} to be joined.
+		 */
 		private void joinParty(Party p) {
 			p.addMember(this);
 			party = p;
 		}
 		
+		/**
+		 * Vote for a candidate.
+		 * @param c {@link Candidate} to be voted for.
+		 */
 		private void voteFor(Candidate c) {
 			Results.addVote(c);
 		}
 		
+		/**
+		 * Display voter info to standard output.
+		 */
 		@Override
 		void display() {
 			System.out.printf("Name: %28s\nParty: %27s\nAge: %29d\n", name, party.name, age);
 		}
 	}
 	
+	/**
+	 * Represents a candidate and their info.
+	 * @author manciul
+	 */
 	private static class Candidate extends Voter {
 		
 		Candidate(Voter v, Party p) {
@@ -76,6 +106,11 @@ public class Election {
 		}
 	}
 	
+	/**
+	 * Represents a political party. Has members that are {@link Voter Voters}, picks a {@link Candidate} from its members to run in the election.
+	 * @author manciul
+	 *
+	 */
 	private static class Party {
 		
 		private String name;
@@ -86,20 +121,34 @@ public class Election {
 			this.name = n;
 		}
 		
+		/**
+		 * Accept a new member.
+		 * @param v {@link Voter} to be added as a member.
+		 */
 		private void addMember(Voter v) {
 			members.add(v);
 		}
 		
+		/**
+		 * Accepts a given voter as the party candidate.
+		 * @param v {@link Voter} to be picked as candidate.
+		 */
 		private void chooseCandidate(Voter v) {
-			Candidate c = new Candidate(v, this);
-			candidate = c;
-			Results.addCandidate(c);
+			candidate = new Candidate(v, this);
+			Results.addCandidate(candidate);
 		}
 		
+		/**
+		 * Returns the number of members that have joined the party.
+		 * @return <code>int</code> number of members
+		 */
 		private int getMemberNumber() {
 			return members.size();
 		}
 		
+		/**
+		 * Display party info in standard output.
+		 */
 		private void display() {
 			System.out.printf("%s\nMembers: %06d     Candidate: ", name, members.size());
 			if (candidate != null) 
@@ -109,6 +158,10 @@ public class Election {
 		}
 	}
 	
+	/**
+	 * Collects election results.
+	 * @author manciul
+	 */
 	private static class Results {
 		private static Map<Candidate, Integer> candidates = new HashMap<Candidate, Integer>();
 		private static List<Candidate> podium = new ArrayList<Candidate>();
