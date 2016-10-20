@@ -1,4 +1,4 @@
-package com.edocti.jintro.hw1;
+package com.edocti.jintro.hw1.election;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,155 +23,29 @@ public class Election {
 	private static final int PARTY_RATIO = 500000;
 	private static final Random RANDOM = new Random();
 	private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-			
-	/**
-	 * Represents one person and their info.
-	 * @author manciul
-	 */
-	private static class Person {
-		
-		protected String name;
-		protected String CNP;
-		protected int age;
-		
-		Person(String n, String c, int a) {
-			this.name = n;
-			this.CNP = c;
-			this.age = a;
-		}
-		
-		/**
-		 * Check if a person is an adult (over the voting age).
-		 * @return <code>true</code> if the person's age is over {@link VOTING_AGE} and <code>false</code> otherwise.
-		 */
-		private boolean isAdult() {
-			return (age >= VOTING_AGE);
-		}
-		
-		/**
-		 * Display person info to standard output.
-		 */
-		@SuppressWarnings("unused")
-		void display() {
-			System.out.printf("Name: %24s\nAge: %3d\n", name, age);
-		}
-	}
-	
-	/**
-	 * Represents a voter and their info, can join and belong to a party, and vote in elections.
-	 * @author manciul
-	 */
-	private static class Voter extends Person {
-		protected Party party;
-		
-		Voter(Person p) {
-			super(p.name, p.CNP, p.age);
-		}
-		
-		/**
-		 * Join a given party.
-		 * @param p {@link Party} to be joined.
-		 */
-		private void joinParty(Party p) {
-			p.addMember(this);
-			party = p;
-		}
-		
-		/**
-		 * Vote for a candidate.
-		 * @param c {@link Candidate} to be voted for.
-		 */
-		private void voteFor(Candidate c) {
-			Results.addVote(c);
-		}
-		
-		/**
-		 * Display voter info to standard output.
-		 */
-		@Override
-		void display() {
-			System.out.printf("Name: %28s\nParty: %27s\nAge: %29d\n", name, party.name, age);
-		}
-	}
-	
-	/**
-	 * Represents a candidate and their info.
-	 * @author manciul
-	 */
-	private static class Candidate extends Voter {
-		
-		Candidate(Voter v, Party p) {
-			super(v);
-			this.party = p;
-		}
-	}
-	
-	/**
-	 * Represents a political party. Has members that are {@link Voter Voters}, picks a {@link Candidate} from its members to run in the election.
-	 * @author manciul
-	 *
-	 */
-	private static class Party {
-		
-		private String name;
-		private Candidate candidate;
-		private List<Voter> members = new ArrayList<Voter>();
-		
-		Party(String n) {
-			this.name = n;
-		}
-		
-		/**
-		 * Accept a new member.
-		 * @param v {@link Voter} to be added as a member.
-		 */
-		private void addMember(Voter v) {
-			members.add(v);
-		}
-		
-		/**
-		 * Accepts a given voter as the party candidate.
-		 * @param v {@link Voter} to be picked as candidate.
-		 */
-		private void chooseCandidate(Voter v) {
-			candidate = new Candidate(v, this);
-			Results.addCandidate(candidate);
-		}
-		
-		/**
-		 * Returns the number of members that have joined the party.
-		 * @return <code>int</code> number of members
-		 */
-		private int getMemberNumber() {
-			return members.size();
-		}
-		
-		/**
-		 * Display party info in standard output.
-		 */
-		private void display() {
-			System.out.printf("%s\nMembers: %06d     Candidate: ", name, members.size());
-			if (candidate != null) 
-				System.out.printf("%23s\n", candidate.name);
-			else
-				System.out.printf("None chosen.\n");
-		}
-	}
 	
 	/**
 	 * Collects election results.
 	 * @author manciul
 	 */
-	private static class Results {
+	public static class Results {
 		private static Map<Candidate, Integer> candidates = new HashMap<Candidate, Integer>();
 		private static List<Candidate> podium = new ArrayList<Candidate>();
 		private static List<Integer> scores = new ArrayList<Integer>(); 
 		
-		private static void addCandidate(Candidate c) {
+		/**
+		 * Registers a new candidate with 0 votes.
+		 * @param c {@link Candidate} to be registered in the election.
+		 */
+		public static void addCandidate(Candidate c) {
 			candidates.put(c, 0);
 		}
 		
-		private static void addVote(Candidate c) {
+		/**
+		 * Record a new vote for a registered candidate.
+		 * @param c {@link Candidate} to be given a new vote to.
+		 */
+		public static void addVote(Candidate c) {
 			int current = candidates.get(c);
 			if (c != null)
 				candidates.put(c, ++current);
@@ -179,14 +53,26 @@ public class Election {
 				System.err.println("Attempting to vote for invalid candidate: " + c);
 		}
 		
+		/**
+		 * Return the list of candidates competing in the election.
+		 * @return <code>ArrayList</code> of {@link Candidate candidates} registered in the election.
+		 */
 		private static List<Candidate> getCandidates() {
 			return new ArrayList<Candidate>(candidates.keySet());
 		}
 		
+		/**
+		 * Return the number of currently registered candidates.
+		 * @return <code>int</code> number of registered candidates.
+		 */
 		private static int getCandidateNumber() {
 			return candidates.size();
 		}
 		
+		/**
+		 * Get the winning candidate after votes have been counted.
+		 * @return the winning {@link Candidate}.
+		 */
 		private static Candidate getWinner() {
 			if (podium.size() != 0)
 				return podium.get(0);
@@ -196,6 +82,9 @@ public class Election {
 			}
 		}
 		
+		/**
+		 * Sort candidates by vote count into ordered lists: podium and scores.
+		 */
 		private static void countVotes() {
 			for (Map.Entry<Candidate, Integer> entry : candidates.entrySet()) {
 				if (podium.size() == 0) {
@@ -220,6 +109,9 @@ public class Election {
 			}
 		}
 		
+		/**
+		 * Display election results.
+		 */
 		private static void display() {
 			Candidate winner = getWinner();
 			System.out.println("Winner:");
@@ -233,92 +125,13 @@ public class Election {
 		}
 	}
 	
-	private static class City {
-		
-		private String name;
-		private int adults = 0;
-		private Section latestSection;
-		private List<Person> people = new ArrayList<Person>();
-		private List<Section> sections = new ArrayList<Section>();
-		
-		City(String n) {
-			this.name = n;
-			this.adults = 0;
-		}
-		
-		private void organizeIntoSections() {
-			latestSection = openNewSection();
-			people.forEach((person) -> {
-				if (person.isAdult()) {
-					if (latestSection.isFull()) {
-						sections.add(latestSection);
-						latestSection = openNewSection();
-					}
-					latestSection.registerVoter(new Voter(person));
-				}
-			});
-			if (!latestSection.isEmpty()) 
-				sections.add(latestSection);
-		}
-		
-		private Section openNewSection() {
-			return new Section(sections.size() + 1);
-		}
-		
-		private void display() {
-			System.out.printf("%s\nPopulation: %d     Adults: %d\n", name, people.size(), adults);
-			System.out.println("Sections:");
-			displaySections();
-		}
-		
-		private void displaySections() {
-			int rowCount = 0;
-			for (int i = 0; i < sections.size(); i++) {
-				Section s = sections.get(i);
-				System.out.printf("Section %02d %03d   ", s.number, s.votersNumber());
-				if (++rowCount > 2) {
-					rowCount = 0;
-					System.out.println();
-				}
-			}	
-			System.out.println();
-		}
-		
-		private int getPopulation() {
-			return people.size();
-		}
+	/**
+	 * @return the voting age.
+	 */
+	public static int getVotingAge() {
+		return VOTING_AGE;
 	}
-	
-	private static class Section {
-		
-		private int number;
-		private static final int SECTION_SIZE = 50000;
-		
-		private List<Voter> registeredVoters = new ArrayList<Voter>();
-		
-		Section(int n) {
-			this.number = n;
-		}
-		
-		private void registerVoter(Voter v) {
-			if (isFull())
-				System.err.println("Registering voter " + v + " to a full voting section.");
-			registeredVoters.add(v);
-		}
-		
-		private int votersNumber() {
-			return registeredVoters.size();
-		}
-		
-		private boolean isFull() {
-			return (registeredVoters.size() >= SECTION_SIZE);
-		}
-		
-		private boolean isEmpty() {
-			return (registeredVoters.size() == 0);
-		}
-	}
-	
+
 	/**
 	 * @param args
 	 */
@@ -342,8 +155,8 @@ public class Election {
 	
 	private static void voting() {
 		for (City city : cities)
-			for (Section section : city.sections)
-				for (Voter voter : section.registeredVoters)
+			for (Section section : city.getSections())
+				for (Voter voter : section.getRegisteredVoters())
 					if (voter.party != null)
 						if (voter.CNP == voter.party.candidate.CNP)
 							voter.voteFor(voter.party.candidate);
@@ -408,12 +221,8 @@ public class Election {
 	}
 	
 	private static void initPopulation(City city, int population) {
-		for (int i = 0; i < population; i++) {
-			Person person = initPerson();
-			if (person.isAdult())
-				city.adults++;
-			city.people.add(person);
-		}
+		for (int i = 0; i < population; i++)
+			city.newInhabitant(initPerson());
 	}
 
 	private static void initParties() {
@@ -441,8 +250,8 @@ public class Election {
 	
 	private static void randomlyJoinParties() {
 		for (City city : cities)
-			for (Section section : city.sections)
-				for (Voter voter : section.registeredVoters)
+			for (Section section : city.getSections())
+				for (Voter voter : section.getRegisteredVoters())
 					if (RANDOM.nextDouble() < 0.05)
 						voter.joinParty(pickRandomParty());
 	}
@@ -453,11 +262,11 @@ public class Election {
 	
 	private static void randomlyElectPartyCandidates() {
 		for (Party party : parties)
-			party.chooseCandidate(pickRandomVoter(party));
+			party.chooseCandidate(pickRandomMember(party));
 	}
 	
-	private static Voter pickRandomVoter(Party party) {
-		return party.members.get(RANDOM.nextInt(party.getMemberNumber()));
+	private static Voter pickRandomMember(Party party) {
+		return party.getMembers().get(RANDOM.nextInt(party.getMembersNumber()));
 	}
 	
 	private static Candidate pickRandomCandidate() {
