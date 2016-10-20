@@ -11,7 +11,7 @@ public class StateMachine {
 	
 	private CustomerSatisfaction satisfaction;
 	private static final Random RANDOM = new Random();
-	private static final int eventSize = ProjectEvent.values().length;
+	private static final int EVENT_SIZE = ProjectEvent.values().length;
 	
 	public StateMachine() {
 		satisfaction = CustomerSatisfaction.UNPLEASED;
@@ -109,7 +109,7 @@ public class StateMachine {
 	 * @return random <code>ProjectEvent</code>
 	 */
 	private static ProjectEvent randomEvent() {
-		return ProjectEvent.values()[(RANDOM.nextInt(eventSize))];
+		return ProjectEvent.values()[(RANDOM.nextInt(EVENT_SIZE))];
 	}
 	
 	/**

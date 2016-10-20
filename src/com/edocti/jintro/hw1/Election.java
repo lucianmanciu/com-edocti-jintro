@@ -22,8 +22,8 @@ public class Election {
 	private static final int VOTING_AGE = 18;
 	private static final int PARTY_RATIO = 500000;
 	private static final Random RANDOM = new Random();
-	private static final char[] ALPHABET = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-
+	private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+			
 	private static class Person {
 		
 		protected String name;
@@ -104,9 +104,8 @@ public class Election {
 			System.out.printf("%s\nMembers: %06d     Candidate: ", name, members.size());
 			if (candidate != null) 
 				System.out.printf("%23s\n", candidate.name);
-			else {
+			else
 				System.out.printf("None chosen.\n");
-			}
 		}
 	}
 	
@@ -289,9 +288,9 @@ public class Election {
 	}
 	
 	private static void voting() {
-		for (City city : cities) {
-			for (Section section : city.sections) {
-				for (Voter voter : section.registeredVoters) {
+		for (City city : cities)
+			for (Section section : city.sections)
+				for (Voter voter : section.registeredVoters)
 					if (voter.party != null)
 						if (voter.CNP == voter.party.candidate.CNP)
 							voter.voteFor(voter.party.candidate);
@@ -302,9 +301,6 @@ public class Election {
 								voter.voteFor(voter.party.candidate);
 					else
 						voter.voteFor(pickRandomCandidate());
-				}
-			}
-		}
 	}
 	
 	private static void displayResults() {
@@ -370,19 +366,16 @@ public class Election {
 	private static void initParties() {
 		int totalPopulation = 0;
 		
-		for (City city : cities) {
+		for (City city : cities)
 			totalPopulation += city.getPopulation();
-		}
 		
-		for (int i = 0; i < totalPopulation / PARTY_RATIO; i++) {
+		for (int i = 0; i < totalPopulation / PARTY_RATIO; i++)
 			parties.add(initParty());
-		}
 	}
 	
 	private static void initSections() {
-		for (City city : cities) {
+		for (City city : cities)
 			city.organizeIntoSections();
-		}
 	}
 	
 	private static Party initParty() {
@@ -394,15 +387,11 @@ public class Election {
 	}
 	
 	private static void randomlyJoinParties() {
-		for (City city : cities) {
-			for (Section section : city.sections) {
-				for (Voter voter : section.registeredVoters) {
-					if (RANDOM.nextDouble() < 0.05) {
+		for (City city : cities)
+			for (Section section : city.sections)
+				for (Voter voter : section.registeredVoters)
+					if (RANDOM.nextDouble() < 0.05)
 						voter.joinParty(pickRandomParty());
-					}
-				}
-			}
-		}
 	}
 	
 	private static Party pickRandomParty() {
@@ -410,9 +399,8 @@ public class Election {
 	}
 	
 	private static void randomlyElectPartyCandidates() {
-		for (Party party : parties) {
+		for (Party party : parties)
 			party.chooseCandidate(pickRandomVoter(party));
-		}
 	}
 	
 	private static Voter pickRandomVoter(Party party) {
@@ -437,9 +425,8 @@ public class Election {
 	
 	private static String randomWord(int n) {
 		String word = "";
-		for (int i = 0; i < n; i++) {
-			word += ALPHABET[randomInt(ALPHABET.length)];
-		}
+		for (int i = 0; i < n; i++)
+			word += ALPHABET.charAt(randomInt(ALPHABET.length()));
 		return word;
 	}
 	
