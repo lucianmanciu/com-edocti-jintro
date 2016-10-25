@@ -1,5 +1,7 @@
 package com.edocti.jintro.utils;
 
+import java.util.Arrays;
+
 /**
  * Simple utility class.
  * 
@@ -27,5 +29,9 @@ public final class Utils {
 			System.out.println(o);
 		}
 		System.out.println();
+	}
+	
+	public static void sort(String[] arr) {
+		Arrays.sort(arr);
 	}
 }
