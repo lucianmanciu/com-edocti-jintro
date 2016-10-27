@@ -1,6 +1,6 @@
 package com.edocti.jintro.lab09;
 
-public class BankAccountClassic implements BankAccount {
+public class BankAccountClassic2 implements BankAccount {
 	
 	private int balance;
 	private int cucu;
@@ -28,38 +28,15 @@ public class BankAccountClassic implements BankAccount {
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
-		final BankAccountClassic ion = new BankAccountClassic();
+		final BankAccountClassic2 ion = new BankAccountClassic2();
 		
 		Thread[] producers = new Thread[10];
 		Thread[] consumers = new Thread[10];
 		
 		for (int i = 0; i < 10; i++) {
-			producers[i] = new Thread(new Runnable() {
-				@Override public void run() {
-					while(true) { 
-						ion.deposit(10); 
-						int b = ion.getBalance();
-						int c = ion.getCucu();
-						if (b != c) {
-							System.out.printf("%d - %d\n", b, c);
-						}
-					}
-				}
-			});
+			producers[i] = new Producer(ion, 10);
 			producers[i].start();
-			
-			consumers[i] = new Thread(new Runnable() {
-				@Override public void run() {
-					while(true) {
-						ion.withdraw(5);
-						int b = ion.getBalance();
-						int c = ion.getCucu();
-						if (b != c) {
-							System.out.printf("%d - %d\n", b, c);
-						}
-					}
-				}
-			});
+			consumers[i] = new Consumer(ion, 5);
 			consumers[i].start();
 		}
 		
